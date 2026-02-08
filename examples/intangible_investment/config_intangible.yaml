@@ -167,7 +167,7 @@ clustering:
 
 # === STAGE 3 ===
 doc_ngrams:
-  community_labels_csv: "./examples/intangible_investment/labeled_communities.csv"
+  community_labels_csv: ""  # Fill in after running Stage 2 and labeling communities
   k_value: 500
   keyword_window:
     enabled: true

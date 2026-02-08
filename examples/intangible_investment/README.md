@@ -14,12 +14,9 @@ Firms report Selling, General & Administrative (SG&A) expenses in their financia
   - SG&A keyword windowing patterns
   - Clustering parameters matching the paper
 
-- **`labeled_communities.csv`** — 231 hand-labeled n-gram communities from the full-corpus analysis. Each community is classified as:
-  - `Intangible investment` with subcategories: `brand or customer capital`, `knowledge capital`, `organization capital`
-  - `Not intangible investment`
-  - `unknown`
+- **`labeled_communities_reference.csv`** — A reference showing what the completed labeling step looks like, from the full-corpus analysis (231 communities labeled across thousands of filings). **This is not used as a pipeline input** — your own Stage 2 run will produce different communities that you need to label yourself. Use this file as a guide for how to structure your labels.
 
-- **`sample_10k_texts/`** — Sample cleaned Item 7 text files (add your own here)
+- **`sample_10k_texts/`** — 10 cleaned Item 7 (MD&A) text excerpts from public EDGAR filings
 
 ## Running the Example
 
@@ -32,7 +29,9 @@ python 01_extract_text.py --config examples/intangible_investment/config_intangi
 # Stage 2: Cluster n-grams
 python 02_cluster_ngrams.py --config examples/intangible_investment/config_intangible.yaml
 
-# The labeled_communities.csv is already provided, so skip the manual labeling step.
+# >>> Manual step: open output/intangible_investment/clusters/community_results/community_labels_k500.csv
+# >>> Add 'category' and 'subcategory' columns (see labeled_communities_reference.csv for an example)
+# >>> Then set doc_ngrams.community_labels_csv in config_intangible.yaml to point to your labeled file
 
 # Stage 3: Extract per-document n-grams and build master mapping
 python 03_extract_doc_ngrams.py --config examples/intangible_investment/config_intangible.yaml
@@ -40,6 +39,23 @@ python 03_extract_doc_ngrams.py --config examples/intangible_investment/config_i
 # Stage 4: Score documents
 python 04_score_documents.py --config examples/intangible_investment/config_intangible.yaml
 ```
+
+## Labeling Guide
+
+After Stage 2, open the `community_labels_k500.csv` file. Each row is a community with representative n-grams. Add two columns:
+
+| category | subcategory |
+|----------|------------|
+| `Intangible investment` | `knowledge capital` |
+| `Intangible investment` | `brand or customer capital` |
+| `Intangible investment` | `organization capital` |
+| `Not intangible investment` | *(leave blank)* |
+| `unknown` | *(leave blank)* |
+
+Review the `representatives` column to decide which category fits. For example:
+- `function research development, research development work` → **knowledge capital**
+- `advertising promotion expense, advertising expense cost` → **brand or customer capital**
+- `cost office rent, rent expense office` → **Not intangible investment**
 
 ## Output
 
