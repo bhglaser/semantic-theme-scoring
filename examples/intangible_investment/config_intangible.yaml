@@ -1,0 +1,195 @@
+# ============================================================
+# Intangible Investment from 10-K Filings — Example Config
+# ============================================================
+# This config replicates the paper's exercise on the sample data.
+# Adjust paths as needed for your environment.
+
+run_name: "intangible_investment"
+output_root: "./output"
+random_seed: 42
+max_workers: 8
+
+# === STAGE 1: TEXT EXTRACTION ===
+extract:
+  input_dir: "./examples/intangible_investment/sample_10k_texts"
+  input_format: "text"
+
+  html_cleaning:
+    enabled: true
+    strip_tags: ["div", "tr", "td", "font", "p", "table"]
+
+  section_extraction:
+    enabled: true
+    start_patterns:
+      - "item\\s*7\\.?\\s*:?\\s*management.?s?\\s+discussion\\s+and\\s+analysis"
+    end_patterns:
+      - "item\\s*8\\.?\\s*:?\\s*(consolidated\\s+)?financial\\s+statements"
+    min_words: 250
+
+# === STAGE 2: N-GRAM CLUSTERING ===
+ngrams:
+  top_n: 10000
+  ngram_range: [2, 3]
+  pos_patterns:
+    2: [["NN", "NN"]]
+    3: [["NN", "NN", "NN"]]
+  min_word_length: 3
+  require_english_words: true
+  custom_stop_words:
+    # Company & legal
+    - inc
+    - corp
+    - llc
+    - ltd
+    - company
+    - companys
+    - business
+    # Document structure
+    - note
+    - item
+    - form
+    - page
+    - sec
+    - gaap
+    - non-gaap
+    - ebitda
+    - sga
+    - information
+    - report
+    - filing
+    - discussion
+    - disclosure
+    - detail
+    - http
+    - https
+    - www
+    - etc
+    - cetera
+    - also
+    - see
+    # Time periods
+    - fiscal
+    - year
+    - years
+    - quarter
+    - quarters
+    - month
+    - months
+    - day
+    - date
+    - period
+    - end
+    - annum
+    - january
+    - february
+    - march
+    - april
+    - may
+    - june
+    - july
+    - august
+    - september
+    - october
+    - november
+    - december
+    # Financial noise
+    - increase
+    - decrease
+    - change
+    - lower
+    - higher
+    - decline
+    - result
+    - due
+    - consist
+    - looking
+    - look
+    # Executive titles
+    - officer
+    - director
+    - manager
+    - executive
+    - president
+    - attorney
+    - counsel
+    - chief
+    - vice
+    - board
+    - committee
+    - chairman
+    - ceo
+    - cfo
+    - coo
+    - cto
+    - shareholder
+    - stockholder
+    - behalf
+    - holder
+    # POS tagger noise
+    - versus
+    - include
+    - including
+    - exclude
+    - excluding
+    - following
+    - pursuant
+    - regarding
+    - without
+    - within
+    - per
+    - upon
+    - among
+    # Manual
+    - revenue
+    - profit
+    - income
+
+embedding:
+  provider: "sentence-transformers"       # Use "openai" for higher quality if you have an API key
+  openai_model: "text-embedding-3-large"
+  openai_batch_size: 512
+  st_model: "sentence-transformers/all-mpnet-base-v2"
+  st_batch_size: 256
+  force_cpu: false
+
+clustering:
+  pca_components: 100
+  pca_whiten: true
+  k_values: [500]
+  kmeans_n_init: 10
+  kmeans_max_iter: 300
+  centroid_knn: 80
+  edge_min_cosine: 0.65
+  leiden_target_communities: [20, 50]
+  leiden_resolution_grid: [0.1]
+  min_cluster_size: 10
+  min_similarity_score: 0.3
+
+# === STAGE 3 ===
+doc_ngrams:
+  community_labels_csv: "./examples/intangible_investment/labeled_communities.csv"
+  k_value: 500
+  keyword_window:
+    enabled: true
+    patterns:
+      - "\\bs\\.?\\s*g\\.?\\s*(?:&|and)\\s*a\\b"
+      - "\\bsg\\s*&\\s*a\\b"
+      - "\\bsga\\b"
+      - "\\bselling[\\s,/\\-]*general[\\s,/\\-]*(?:&|and)[\\s,/\\-]*admin(?:istrative)?\\b"
+      - "\\bselling[\\s,/\\-]*(?:&|and)[\\s,/\\-]*admin(?:istrative)?\\b"
+      - "\\bgeneral[\\s,/\\-]*(?:&|and)[\\s,/\\-]*admin(?:istrative)?\\b"
+    sentences_before: 1
+    sentences_after: 10
+
+# === STAGE 4 ===
+scoring:
+  embedding:
+    provider: "sentence-transformers"
+    st_model: "sentence-transformers/all-mpnet-base-v2"
+    st_batch_size: 256
+    force_cpu: false
+  normalize_vectors: true
+  similarity_threshold: 0.0
+  relative_weight: false
+  excluded_categories: []
+  write_debug: false

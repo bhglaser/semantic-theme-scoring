@@ -1,0 +1,16 @@
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+nltk>=3.8
+python-igraph>=0.11
+leidenalg>=0.10
+tqdm>=4.60
+pyyaml>=6.0
+
+# --- Embedding providers (install at least one) ---
+# Local embeddings (free, no API key needed):
+sentence-transformers>=2.2
+torch>=2.0
+
+# OpenAI API embeddings (optional, requires OPENAI_API_KEY):
+# openai>=1.0

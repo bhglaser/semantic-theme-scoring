@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Pipeline output
+output/
+
+# Environment
+.env
+*.env
+
+# OS
+.DS_Store
+Icon?
+
+# IDE
+.vscode/
+.idea/
+*.swp

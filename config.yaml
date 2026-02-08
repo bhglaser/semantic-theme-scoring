@@ -1,0 +1,90 @@
+# ============================================================
+# N-Gram Pipeline Configuration
+# ============================================================
+# Single config file for all four pipeline stages.
+# Adjust paths and parameters below, then run each stage in order.
+
+# --- Global ---
+run_name: "my_analysis"
+output_root: "./output"        # All outputs go under output_root/<run_name>/
+random_seed: 42
+max_workers: 8                 # Parallelism for CPU-bound stages
+
+# === STAGE 1: TEXT EXTRACTION ===
+extract:
+  input_dir: "./raw_documents"   # Folder of raw files (txt, html, json)
+  input_format: "text"           # "text" | "html" | "json" (json expects {"text": "..."})
+
+  # Optional HTML cleaning (set enabled: false to skip)
+  html_cleaning:
+    enabled: false
+    strip_tags: ["div", "tr", "td", "font", "p", "table"]
+
+  # Optional section extraction (set enabled: false to use full document)
+  section_extraction:
+    enabled: false
+    start_patterns: []           # Regex patterns for section start
+    end_patterns: []             # Regex patterns for section end
+    min_words: 250               # Minimum word count to keep a section
+
+# === STAGE 2: N-GRAM CLUSTERING ===
+ngrams:
+  top_n: 10000                   # Keep top N n-grams by corpus frequency
+  ngram_range: [2, 3]            # Min and max n-gram length
+  pos_patterns:                  # Allowed POS tag patterns per n-gram length
+    2: [["NN", "NN"]]
+    3: [["NN", "NN", "NN"]]
+  min_word_length: 3
+  require_english_words: true    # Filter to NLTK English word list
+  custom_stop_words: []          # Add domain-specific stop words here
+
+embedding:
+  provider: "sentence-transformers"  # "openai" or "sentence-transformers"
+  # OpenAI settings (used when provider: "openai")
+  openai_model: "text-embedding-3-large"
+  openai_batch_size: 512
+  # sentence-transformers settings (used when provider: "sentence-transformers")
+  st_model: "sentence-transformers/all-mpnet-base-v2"
+  st_batch_size: 256
+  force_cpu: false
+
+clustering:
+  pca_components: 100
+  pca_whiten: true
+  k_values: [500]               # Spherical KMeans K values
+  kmeans_n_init: 10
+  kmeans_max_iter: 300
+  centroid_knn: 80
+  edge_min_cosine: 0.65
+  leiden_target_communities: [20, 50]  # [min, max] target range
+  leiden_resolution_grid: [0.1]
+  min_cluster_size: 10
+  min_similarity_score: 0.3
+
+# === STAGE 3: DOCUMENT N-GRAM EXTRACTION ===
+doc_ngrams:
+  # Path to the user-labeled communities CSV (fill in after manual labeling)
+  community_labels_csv: ""       # e.g., "output/my_analysis/clusters/community_labels_k500.csv"
+  k_value: 500                   # Which K value's community assignments to use
+
+  # Optional keyword windowing (set enabled: false to use full document)
+  keyword_window:
+    enabled: false
+    patterns: []                 # Regex patterns to match
+    sentences_before: 1
+    sentences_after: 10
+
+# === STAGE 4: SCORING ===
+scoring:
+  embedding:
+    provider: "sentence-transformers"
+    st_model: "sentence-transformers/all-mpnet-base-v2"
+    openai_model: "text-embedding-3-large"
+    st_batch_size: 256
+    openai_batch_size: 512
+    force_cpu: false
+  normalize_vectors: true
+  similarity_threshold: 0.0      # Drop n-grams with cosine < this (0.0 = keep all positive)
+  relative_weight: false         # Divide by whitelist size |W_k| before renormalizing
+  excluded_categories: []        # Categories to exclude from probability distributions
+  write_debug: false             # Write per-doc contribution CSVs
