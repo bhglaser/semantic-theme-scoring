@@ -128,3 +128,19 @@ output/<run_name>/
 ## Example: Intangible Investment from 10-K Filings
 
 The `examples/intangible_investment/` directory contains a complete worked example replicating the measurement of intangible investment intensity from SEC 10-K filings. See its README for details.
+
+## Citation
+
+If you use this pipeline in your research, please cite:
+
+> Eisfeldt, Andrea L., Barney Hartman-Glaser, Edward T. Kim, and Ki Beom Lee. "Intangible Intensity." Working Paper, 2025.
+
+BibTeX:
+```bibtex
+@unpublished{eisfeldt2025intangible,
+  title={Intangible Intensity},
+  author={Eisfeldt, Andrea L. and Hartman-Glaser, Barney and Kim, Edward T. and Lee, Ki Beom},
+  year={2025},
+  note={Working Paper}
+}
+```
