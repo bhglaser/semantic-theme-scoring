@@ -280,3 +280,70 @@ def _embed_sentence_transformers(texts: list[str], cfg: dict) -> np.ndarray:
         normalize_embeddings=False,
     )
     return np.array(vecs, dtype=np.float32)
+
+
+# ---------------------------------------------------------------------------
+# LLM calls (Ollama or OpenAI)
+# ---------------------------------------------------------------------------
+
+def call_llm(prompt: str, llm_cfg: dict) -> str | None:
+    """
+    Send a prompt to an LLM and return the response text.
+
+    llm_cfg should contain:
+      - provider: "ollama" or "openai"
+      - For Ollama: ollama_model
+      - For OpenAI: openai_model
+
+    Returns response text, or None on failure.
+    """
+    provider = llm_cfg.get("provider", "ollama")
+
+    if provider == "openai":
+        return _llm_openai(prompt, llm_cfg)
+    else:
+        return _llm_ollama(prompt, llm_cfg)
+
+
+def _llm_ollama(prompt: str, cfg: dict) -> str | None:
+    """Call a local Ollama model."""
+    import ollama
+
+    model = cfg.get("ollama_model", "gemma3n:e2b")
+    try:
+        response = ollama.chat(
+            model=model,
+            format="json",
+            messages=[{"role": "user", "content": prompt}],
+            options={"temperature": 0.0},
+        )
+        return response["message"]["content"]
+    except Exception as e:
+        logger.error(f"Ollama LLM error: {e}")
+        return None
+
+
+def _llm_openai(prompt: str, cfg: dict) -> str | None:
+    """Call the OpenAI chat completions API."""
+    import openai
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError(
+            "OPENAI_API_KEY environment variable is not set. "
+            "Run: export OPENAI_API_KEY='your-key-here'"
+        )
+
+    client = openai.OpenAI(api_key=api_key)
+    model = cfg.get("openai_model", "gpt-4o-mini")
+    try:
+        resp = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            response_format={"type": "json_object"},
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        logger.error(f"OpenAI LLM error: {e}")
+        return None

@@ -3,10 +3,11 @@
 Discover semantic themes in any text corpus using n-gram extraction, embedding-based clustering, and document scoring.
 
 Given a collection of documents, this pipeline:
-1. Extracts POS-filtered noun phrases (bigrams and trigrams)
-2. Clusters them into semantic communities via embeddings + Leiden community detection
-3. Lets you label those communities with your own categories
-4. Scores every document against the labeled communities, producing category probability distributions
+1. Extracts and cleans text from raw documents
+2. (Optional) Uses an LLM to extract domain-relevant text for dictionary construction
+3. Extracts POS-filtered noun phrases (bigrams and trigrams) and clusters them into semantic communities via embeddings + Leiden community detection
+4. Lets you label those communities with your own categories
+5. Scores every document against the labeled communities, producing category probability distributions
 
 ## Quick Start
 
@@ -22,8 +23,9 @@ cp config.yaml my_config.yaml
 # Edit my_config.yaml: set run_name, input paths, embedding provider, etc.
 
 # Run the pipeline
-python 01_extract_text.py    --config my_config.yaml
-python 02_cluster_ngrams.py  --config my_config.yaml
+python 01_extract_text.py       --config my_config.yaml
+python 01b_llm_extract.py      --config my_config.yaml   # optional: LLM-based text filtering
+python 02_cluster_ngrams.py     --config my_config.yaml   # auto-detects LLM extracts if present
 
 # >>> Manual step: open output/<run>/clusters/community_results/community_labels_k500.csv
 # >>> Add 'category' and 'subcategory' columns, then save
@@ -41,10 +43,21 @@ Reads raw documents and writes cleaned text files. For plain text corpora, this 
 - **HTML tag stripping** for web-scraped content
 - **Section extraction** between configurable regex patterns (e.g., extract only a specific section from structured documents)
 
+### Stage 1b: LLM Text Extraction (`01b_llm_extract.py`) — Optional
+
+When enabled (`llm_extract.enabled: true`), this stage uses an LLM to extract domain-relevant text from each document before dictionary construction. For each document:
+1. Finds context blocks around configured expense keywords
+2. Sends context to an LLM that extracts definition, business driver, and change driver quotes
+3. Writes filtered text to `output/<run>/llm_extracts/`
+
+Stage 2 will automatically detect and use the LLM extracts if present, building the n-gram dictionary from focused text rather than full documents.
+
+**LLM providers:** Ollama (local, free) or OpenAI API (requires `OPENAI_API_KEY`).
+
 ### Stage 2: N-Gram Clustering (`02_cluster_ngrams.py`)
 
 The core of the pipeline:
-1. Extracts POS-filtered bigrams/trigrams (noun-noun patterns) from all documents
+1. Extracts POS-filtered bigrams/trigrams (noun-noun patterns) from all documents (or from LLM extracts if Stage 1b was run)
 2. Keeps the top N by corpus frequency (default: 10,000)
 3. Embeds them using OpenAI API or a local sentence-transformers model
 4. PCA-whitens and L2-normalizes the embeddings
@@ -96,6 +109,7 @@ The clustering and scoring stages use different embedding spaces by design. The 
 All parameters live in a single `config.yaml`. Key sections:
 
 - **`extract`**: Input directory, format, optional HTML cleaning and section extraction
+- **`llm_extract`**: Optional LLM-based text filtering (provider, model, expense keywords)
 - **`ngrams`**: Top N count, n-gram range, POS patterns, custom stop words
 - **`embedding`**: Provider choice and model settings for clustering
 - **`clustering`**: PCA, KMeans, Leiden parameters
@@ -109,6 +123,7 @@ See `config.yaml` for the full annotated schema.
 ```
 output/<run_name>/
     texts/                          # Stage 1 output
+    llm_extracts/                   # Stage 1b output (if LLM extraction enabled)
     clusters/
         ngram_master_list.csv       # Top N n-grams
         embeddings/                 # N-gram and community centroid embeddings

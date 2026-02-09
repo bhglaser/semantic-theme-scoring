@@ -12,5 +12,9 @@ pyyaml>=6.0
 sentence-transformers>=2.2
 torch>=2.0
 
-# OpenAI API embeddings (optional, requires OPENAI_API_KEY):
+# OpenAI API embeddings/LLM (optional, requires OPENAI_API_KEY):
 # openai>=1.0
+
+# --- LLM providers for Stage 1b (install at least one if using LLM extraction) ---
+# Local LLM via Ollama (free, requires Ollama installed):
+# ollama>=0.4

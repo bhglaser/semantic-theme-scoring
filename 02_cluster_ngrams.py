@@ -346,10 +346,14 @@ def main():
     setup_nltk()
 
     run_dir = get_run_dir(cfg)
-    text_dir = str(run_dir / "texts")
 
-    # If Stage 1 output exists, use it; otherwise fall back to raw input_dir
-    if not os.path.isdir(text_dir) or not os.listdir(text_dir):
+    # Text source priority: LLM extracts → Stage 1 texts → raw input_dir
+    llm_dir = str(run_dir / "llm_extracts")
+    text_dir = str(run_dir / "texts")
+    if os.path.isdir(llm_dir) and os.listdir(llm_dir):
+        text_dir = llm_dir
+        log.info(f"Using LLM-extracted text for dictionary construction from {text_dir}")
+    elif not os.path.isdir(text_dir) or not os.listdir(text_dir):
         text_dir = cfg.get("extract", {}).get("input_dir", "./raw_documents")
         log.info(f"No Stage 1 output found; reading directly from {text_dir}")
 

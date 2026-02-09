@@ -27,6 +27,17 @@ extract:
     end_patterns: []             # Regex patterns for section end
     min_words: 250               # Minimum word count to keep a section
 
+# === STAGE 1b: LLM TEXT EXTRACTION (optional) ===
+llm_extract:
+  enabled: false                     # Set true to use LLM-based text filtering before Stage 2
+  provider: "ollama"                 # "ollama" (local, free) or "openai" (requires OPENAI_API_KEY)
+  ollama_model: "gemma3n:e2b"        # Ollama model name
+  openai_model: "gpt-4o-mini"        # OpenAI model name
+  max_workers: 1                     # LLM calls per document are sequential; parallelize across docs
+  context_lines_before: 0            # Lines of context before a keyword match
+  context_lines_after: 10            # Lines of context after a keyword match
+  expense_keywords: {}               # Map of category_name -> [keyword phrases]; see example config
+
 # === STAGE 2: N-GRAM CLUSTERING ===
 ngrams:
   top_n: 10000                   # Keep top N n-grams by corpus frequency

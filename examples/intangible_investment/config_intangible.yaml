@@ -26,6 +26,52 @@ extract:
       - "item\\s*8\\.?\\s*:?\\s*(consolidated\\s+)?financial\\s+statements"
     min_words: 250
 
+# === STAGE 1b: LLM TEXT EXTRACTION ===
+# The paper uses an LLM to extract SG&A-focused quotes from each document's
+# Item 7 before building the n-gram dictionary. This filters the corpus to
+# expense-relevant text only.
+llm_extract:
+  enabled: true
+  provider: "ollama"                 # "ollama" (local, free) or "openai" (requires OPENAI_API_KEY)
+  ollama_model: "gemma3n:e2b"
+  openai_model: "gpt-4o-mini"
+  max_workers: 1
+  context_lines_before: 0
+  context_lines_after: 10
+  expense_keywords:
+    sga:
+      - "selling, general and administrative"
+      - "sg&a"
+      - "selling, general and administrative expense"
+      - "selling, general and administrative expenses"
+    general_and_administrative:
+      - "general and administrative"
+      - "general and administrative expense"
+      - "general, administrative and other expense"
+      - "general expense"
+      - "administrative expense"
+      - "general and administrative expenses"
+      - "general, administrative and other expenses"
+      - "general expenses"
+      - "administrative expenses"
+    sales_and_marketing:
+      - "sales and marketing"
+      - "sales and marketing expense"
+      - "selling and marketing expense"
+      - "sales expense"
+      - "marketing expense"
+      - "advertising expense"
+      - "sales and marketing expenses"
+      - "selling and marketing expenses"
+      - "sales expenses"
+      - "marketing expenses"
+      - "advertising expenses"
+    operating_expense:
+      - "operating expense"
+      - "operating expenses"
+      - "operational expense"
+      - "operational expenses"
+
 # === STAGE 2: N-GRAM CLUSTERING ===
 ngrams:
   top_n: 10000
@@ -169,8 +215,10 @@ clustering:
 doc_ngrams:
   community_labels_csv: ""  # Fill in after running Stage 2 and labeling communities
   k_value: 500
+  # keyword_window is disabled: the paper uses full Item 7 text for per-document
+  # n-gram extraction (not just SGA keyword neighborhoods).
   keyword_window:
-    enabled: true
+    enabled: false
     patterns:
       - "\\bs\\.?\\s*g\\.?\\s*(?:&|and)\\s*a\\b"
       - "\\bsg\\s*&\\s*a\\b"
