@@ -104,6 +104,41 @@ export OPENAI_API_KEY="your-key-here"
 
 The clustering and scoring stages use different embedding spaces by design. The community assignments from clustering are the bridge between stages, not the embedding vectors.
 
+## LLM Providers (for Stage 1b)
+
+Stage 1b uses an LLM to extract domain-relevant text before dictionary construction. This stage is optional — skip it if you want to build the dictionary from full documents.
+
+| Provider | Config value | Pros | Cons |
+|----------|-------------|------|------|
+| Ollama | `"ollama"` | Free, local, private | Requires local install + model download |
+| OpenAI API | `"openai"` | High quality, no local setup | Costs money, needs API key |
+
+### Installing Ollama
+
+1. **Download and install** from [https://ollama.com](https://ollama.com) (macOS, Linux, Windows)
+
+   On macOS you can also install via Homebrew:
+   ```bash
+   brew install ollama
+   ```
+
+2. **Start the Ollama server** (if it's not already running):
+   ```bash
+   ollama serve
+   ```
+
+3. **Pull a model**. The default in the config is `gemma3:4b`, but you can use any model Ollama supports:
+   ```bash
+   ollama pull gemma3:4b
+   ```
+
+4. **Install the Python client**:
+   ```bash
+   pip3 install ollama
+   ```
+
+5. Set `llm_extract.provider: "ollama"` and `llm_extract.model` in your config to match the model you pulled.
+
 ## Configuration
 
 All parameters live in a single `config.yaml`. Key sections:
