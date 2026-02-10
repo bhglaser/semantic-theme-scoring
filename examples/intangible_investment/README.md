@@ -44,6 +44,11 @@ Before running the example, you need to set up Ollama for Stage 1b (LLM text ext
    ```
    If you see "address already in use", the server is already running and you're good to go.
 
+5. **Download NLTK data** (one-time, required for Stage 2 n-gram extraction):
+   ```bash
+   python3 -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('averaged_perceptron_tagger'); nltk.download('averaged_perceptron_tagger_eng'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('omw-1.4'); nltk.download('words')"
+   ```
+
 **Alternative:** If you want to skip Stage 1b, set `llm_extract.enabled: false` in `config_intangible.yaml` and skip straight to Stage 2. The pipeline will build the dictionary from full Item 7 text instead of LLM-filtered quotes.
 
 ## Running the Example
