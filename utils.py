@@ -15,7 +15,7 @@ from pathlib import Path
 from collections import Counter
 
 import nltk
-from nltk.corpus import stopwords, words
+from nltk.corpus import stopwords, words, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import ngrams as nltk_ngrams, word_tokenize, pos_tag
 
@@ -53,7 +53,7 @@ def setup_nltk():
     for resource in ["averaged_perceptron_tagger",
                      "averaged_perceptron_tagger_eng",
                      "stopwords", "punkt", "punkt_tab",
-                     "wordnet", "words"]:
+                     "wordnet", "omw-1.4", "words"]:
         try:
             nltk.data.find(f"corpora/{resource}")
         except LookupError:
@@ -64,6 +64,12 @@ def setup_nltk():
                     nltk.data.find(f"tokenizers/{resource}")
                 except LookupError:
                     nltk.download(resource, quiet=True)
+
+    # Force WordNet to initialize by accessing it
+    try:
+        _ = wordnet.synsets('test')
+    except Exception:
+        pass
 
 
 def get_stop_words(custom: list | None = None) -> set:
