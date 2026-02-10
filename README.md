@@ -143,7 +143,7 @@ Stage 1b uses an LLM to extract domain-relevant text before dictionary construct
 
 All parameters live in a single `config.yaml`. Key sections:
 
-- **`extract`**: Input directory, format, optional HTML cleaning and section extraction
+- **`extract`**: Input directory, format, optional HTML cleaning and section extraction. When `section_extraction.enabled` is `true`, the pipeline extracts only the text between `start_patterns` and `end_patterns` (both are lists of regexes matched case-insensitively against the document). For example, to extract Item 7 (MD&A) from SEC 10-K filings, set `start_patterns` to match "Item 7" and `end_patterns` to match "Item 8" — the pipeline keeps everything between the first match of a start pattern and the nearest subsequent match of an end pattern. Sections shorter than `min_words` are discarded. If no matching section is found, the file is skipped.
 - **`llm_extract`**: Optional LLM-based text filtering (provider, model, expense keywords)
 - **`ngrams`**: Top N count, n-gram range, POS patterns, custom stop words
 - **`embedding`**: Provider choice and model settings for clustering
