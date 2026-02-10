@@ -18,6 +18,33 @@ Firms report Selling, General & Administrative (SG&A) expenses in their financia
 
 - **`sample_10k_texts/`** — 10 pre-extracted Item 7 (MD&A) sections from public EDGAR filings, already cleaned. **Note:** If you want to run the pipeline on raw 10-K HTML filings from EDGAR, enable `html_cleaning` and `section_extraction` in the config. For this example, they're disabled since the sample data is already processed.
 
+## Prerequisites
+
+Before running the example, you need to set up Ollama for Stage 1b (LLM text extraction):
+
+1. **Install Ollama** (if not already installed):
+   ```bash
+   brew install ollama  # macOS
+   # Or download from https://ollama.com
+   ```
+
+2. **Start the Ollama server** (in a separate terminal, or it may already be running):
+   ```bash
+   ollama serve
+   ```
+
+3. **Pull the model** used in the example:
+   ```bash
+   ollama pull gemma3n:e2b
+   ```
+
+4. **Install the Python ollama client**:
+   ```bash
+   pip3 install ollama
+   ```
+
+**Alternative:** If you want to skip Stage 1b, set `llm_extract.enabled: false` in `config_intangible.yaml` and skip straight to Stage 2. The pipeline will build the dictionary from full Item 7 text instead of LLM-filtered quotes.
+
 ## Running the Example
 
 ```bash
