@@ -24,24 +24,24 @@ Firms report Selling, General & Administrative (SG&A) expenses in their financia
 cd ngram_pipeline/
 
 # Stage 1: Extract text (applies section extraction for Item 7)
-python 01_extract_text.py --config examples/intangible_investment/config_intangible.yaml
+python3 01_extract_text.py --config examples/intangible_investment/config_intangible.yaml
 
 # Stage 1b: LLM-based SG&A text extraction (requires Ollama or OpenAI API key)
 # This extracts expense-relevant quotes from each document for dictionary construction.
-python 01b_llm_extract.py --config examples/intangible_investment/config_intangible.yaml
+python3 01b_llm_extract.py --config examples/intangible_investment/config_intangible.yaml
 
 # Stage 2: Cluster n-grams (auto-detects LLM extracts if present)
-python 02_cluster_ngrams.py --config examples/intangible_investment/config_intangible.yaml
+python3 02_cluster_ngrams.py --config examples/intangible_investment/config_intangible.yaml
 
 # >>> Manual step: open output/intangible_investment/clusters/community_results/community_labels_k500.csv
 # >>> Add 'category' and 'subcategory' columns (see labeled_communities_reference.csv for an example)
 # >>> Then set doc_ngrams.community_labels_csv in config_intangible.yaml to point to your labeled file
 
 # Stage 3: Extract per-document n-grams from full Item 7 text and build master mapping
-python 03_extract_doc_ngrams.py --config examples/intangible_investment/config_intangible.yaml
+python3 03_extract_doc_ngrams.py --config examples/intangible_investment/config_intangible.yaml
 
 # Stage 4: Score documents
-python 04_score_documents.py --config examples/intangible_investment/config_intangible.yaml
+python3 04_score_documents.py --config examples/intangible_investment/config_intangible.yaml
 ```
 
 **Note on Stage 1b:** The paper uses an LLM to extract SG&A-focused text (definition quotes, business driver quotes, and change driver quotes) before building the n-gram dictionary. This ensures the dictionary captures expense-relevant language. Stage 2 reads from these LLM extracts rather than full documents. Stage 3 then scores each document using the full Item 7 text against this focused dictionary.

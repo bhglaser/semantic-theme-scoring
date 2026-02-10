@@ -13,26 +13,26 @@ Given a collection of documents, this pipeline:
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Download NLTK data (automatic on first run, or manually)
-python -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('words')"
+python3 -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('words')"
 
 # Copy and edit the config
 cp config.yaml my_config.yaml
 # Edit my_config.yaml: set run_name, input paths, embedding provider, etc.
 
 # Run the pipeline
-python 01_extract_text.py       --config my_config.yaml
-python 01b_llm_extract.py      --config my_config.yaml   # optional: LLM-based text filtering
-python 02_cluster_ngrams.py     --config my_config.yaml   # auto-detects LLM extracts if present
+python3 01_extract_text.py       --config my_config.yaml
+python3 01b_llm_extract.py      --config my_config.yaml   # optional: LLM-based text filtering
+python3 02_cluster_ngrams.py     --config my_config.yaml   # auto-detects LLM extracts if present
 
 # >>> Manual step: open output/<run>/clusters/community_results/community_labels_k500.csv
 # >>> Add 'category' and 'subcategory' columns, then save
 # >>> Update doc_ngrams.community_labels_csv in your config if you saved it elsewhere
 
-python 03_extract_doc_ngrams.py --config my_config.yaml
-python 04_score_documents.py    --config my_config.yaml
+python3 03_extract_doc_ngrams.py --config my_config.yaml
+python3 04_score_documents.py    --config my_config.yaml
 ```
 
 ## Pipeline Stages
