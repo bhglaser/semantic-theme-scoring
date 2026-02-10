@@ -5,7 +5,7 @@ Discover semantic themes in any text corpus using n-gram extraction, embedding-b
 Given a collection of documents, this pipeline:
 1. Extracts and cleans text from raw documents
 2. (Optional) Uses an LLM to extract domain-relevant text for dictionary construction
-3. Extracts POS-filtered noun phrases (bigrams and trigrams) and clusters them into semantic communities via embeddings + Leiden community detection
+3. Extracts part of speach (POS)-filtered noun phrases (bigrams and trigrams) and clusters them into semantic communities via embeddings + Leiden community detection
 4. Lets you label those communities with your own categories
 5. Scores every document against the labeled communities, producing category probability distributions
 
