@@ -205,7 +205,7 @@ clustering:
   #   pca_components: 100, k_values: [500]
   pca_components: 50    # Reduced for small sample (must be < number of n-grams)
   pca_whiten: true
-  k_values: [100]        # Reduced for small sample (must be < number of n-grams)
+  k_values: [20]        # Reduced for very small sample (must be < number of n-grams)
   kmeans_n_init: 10
   kmeans_max_iter: 300
   centroid_knn: 80
@@ -218,7 +218,7 @@ clustering:
 # === STAGE 3 ===
 doc_ngrams:
   community_labels_csv: ""  # Fill in after running Stage 2 and labeling communities
-  k_value: 100  # Must match k_values in clustering section
+  k_value: 20  # Must match k_values in clustering section
   # keyword_window is disabled: the paper uses full Item 7 text for per-document
   # n-gram extraction (not just SGA keyword neighborhoods).
   keyword_window:
