@@ -20,28 +20,29 @@ Firms report Selling, General & Administrative (SG&A) expenses in their financia
 
 ## Prerequisites
 
-Before running the example, you need to set up Ollama for Stage 1b (LLM text extraction):
+Before running the example, you need to set up Ollama for Stage 1b (LLM text extraction). **These are one-time setup steps:**
 
-1. **Install Ollama** (if not already installed):
+1. **Install Ollama** (one-time):
    ```bash
    brew install ollama  # macOS
    # Or download from https://ollama.com
    ```
 
-2. **Start the Ollama server** (in a separate terminal, or it may already be running):
-   ```bash
-   ollama serve
-   ```
-
-3. **Pull the model** used in the example:
+2. **Pull the model** used in the example (one-time, downloads ~2GB):
    ```bash
    ollama pull gemma3n:e2b
    ```
 
-4. **Install the Python ollama client**:
+3. **Install the Python ollama client** (one-time per Python environment):
    ```bash
    pip3 install ollama
    ```
+
+4. **Ensure the Ollama server is running** (usually runs automatically after install):
+   ```bash
+   ollama serve  # Only needed if you get connection errors
+   ```
+   If you see "address already in use", the server is already running and you're good to go.
 
 **Alternative:** If you want to skip Stage 1b, set `llm_extract.enabled: false` in `config_intangible.yaml` and skip straight to Stage 2. The pipeline will build the dictionary from full Item 7 text instead of LLM-filtered quotes.
 
