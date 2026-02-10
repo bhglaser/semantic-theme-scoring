@@ -14,12 +14,13 @@ extract:
   input_dir: "./examples/intangible_investment/sample_10k_texts"
   input_format: "text"
 
+  # Sample files are already cleaned Item 7 text, so no extraction needed
   html_cleaning:
-    enabled: true
+    enabled: false
     strip_tags: ["div", "tr", "td", "font", "p", "table"]
 
   section_extraction:
-    enabled: true
+    enabled: false
     start_patterns:
       - "item\\s*7\\.?\\s*:?\\s*management.?s?\\s+discussion\\s+and\\s+analysis"
     end_patterns:

@@ -16,14 +16,14 @@ Firms report Selling, General & Administrative (SG&A) expenses in their financia
 
 - **`labeled_communities_reference.csv`** — A reference showing what the completed labeling step looks like, from the full-corpus analysis (231 communities labeled across thousands of filings). **This is not used as a pipeline input** — your own Stage 2 run will produce different communities that you need to label yourself. Use this file as a guide for how to structure your labels.
 
-- **`sample_10k_texts/`** — 10 cleaned Item 7 (MD&A) text excerpts from public EDGAR filings
+- **`sample_10k_texts/`** — 10 pre-extracted Item 7 (MD&A) sections from public EDGAR filings, already cleaned. **Note:** If you want to run the pipeline on raw 10-K HTML filings from EDGAR, enable `html_cleaning` and `section_extraction` in the config. For this example, they're disabled since the sample data is already processed.
 
 ## Running the Example
 
 ```bash
 cd ngram_pipeline/
 
-# Stage 1: Extract text (applies section extraction for Item 7)
+# Stage 1: Extract text (sample files are already pre-extracted Item 7, so this is a pass-through)
 python3 01_extract_text.py --config examples/intangible_investment/config_intangible.yaml
 
 # Stage 1b: LLM-based SG&A text extraction (requires Ollama or OpenAI API key)
