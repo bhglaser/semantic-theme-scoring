@@ -83,10 +83,15 @@ Review the `representatives` column to understand what each community captures. 
 ### Stage 4: Document Scoring (`04_score_documents.py`)
 
 1. Embeds all whitelist n-grams and computes community centroids
-2. For each document: computes cosine similarity of its n-grams to their community centroids
-3. Accumulates category/subcategory scores with cosine weighting
-4. Normalizes to probability distributions
-5. Outputs wide CSVs: `scores_category_prob_embedding.csv`, etc.
+2. For each document, counts how many times each whitelisted n-gram appears
+3. Accumulates scores per category/subcategory using two methods:
+   - **Frequency counting** (`_prob_counts` files): Each n-gram occurrence counts as 1, regardless of its position in the embedding space. This is the measure used in [Eisfeldt, Hartman-Glaser, Kim, and Lee (2025)](#citation).
+   - **Cosine-weighted** (`_prob_embedding` files): Each n-gram occurrence is weighted by its cosine similarity to its community centroid, so n-grams near the center of their community count more than peripheral ones.
+4. Normalizes both to probability distributions
+5. Outputs wide CSVs:
+   - `scores_category_prob_counts.csv` — frequency-based (Eisfeldt et al., 2025)
+   - `scores_category_prob_embedding.csv` — cosine-weighted (alternative)
+   - Same split for subcategories
 
 ## Embedding Providers
 
