@@ -19,7 +19,7 @@ from nltk.corpus import stopwords, words, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import ngrams as nltk_ngrams, word_tokenize, pos_tag
 
-logger = logging.getLogger("ngram_pipeline")
+logger = logging.getLogger("semantic_theme_scoring")
 
 
 # ---------------------------------------------------------------------------

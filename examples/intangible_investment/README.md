@@ -54,7 +54,7 @@ Before running the example, you need to set up Ollama for Stage 1b (LLM text ext
 ## Running the Example
 
 ```bash
-cd ngram_pipeline/
+cd semantic-theme-scoring/
 
 # Stage 1: Extract text (sample files are already pre-extracted Item 7, so this is a pass-through)
 python3 01_extract_text.py --config examples/intangible_investment/config_intangible.yaml

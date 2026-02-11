@@ -1,4 +1,4 @@
-# ngram_pipeline
+# Semantic Theme Scoring
 
 Discover semantic themes in any text corpus using n-gram extraction, embedding-based clustering, and document scoring.
 
