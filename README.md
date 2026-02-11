@@ -5,7 +5,7 @@ Discover semantic themes in any text corpus using n-gram extraction, embedding-b
 Given a collection of documents, this pipeline:
 1. Extracts and cleans text from raw documents
 2. (Optional) Uses an LLM to extract domain-relevant text for dictionary construction
-3. Extracts part of speach (POS)-filtered noun phrases (bigrams and trigrams) and clusters them into semantic communities via embeddings + Leiden community detection
+3. Extracts part of speech (POS)-filtered noun phrases (bigrams and trigrams) and clusters them into semantic communities via embeddings + Leiden community detection
 4. Lets you label those communities with your own categories
 5. Scores every document against the labeled communities, producing category probability distributions
 
@@ -27,7 +27,7 @@ python3 01_extract_text.py       --config my_config.yaml
 python3 01b_llm_extract.py      --config my_config.yaml   # optional: LLM-based text filtering
 python3 02_cluster_ngrams.py     --config my_config.yaml   # auto-detects LLM extracts if present
 
-# >>> Manual step: open output/<run>/clusters/community_results/community_labels_k500.csv
+# >>> Manual step: open output/<run>/clusters/community_results/community_labels_k{K}.csv
 # >>> Add 'category' and 'subcategory' columns, then save
 # >>> Update doc_ngrams.community_labels_csv in your config if you saved it elsewhere
 
@@ -72,7 +72,7 @@ After Stage 2, you must open the `community_labels_k{K}.csv` file and add two co
 - **`category`**: A high-level label (e.g., "technology", "marketing", "operations")
 - **`subcategory`** (optional): A finer-grained label within the category
 
-Review the `representatives` column to understand what each community captures. See `examples/intangible_investment/labeled_communities.csv` for a worked example.
+Review the `representatives` column to understand what each community captures. See `examples/intangible_investment/labeled_communities_reference.csv` for a worked example.
 
 ### Stage 3: Document N-Gram Extraction (`03_extract_doc_ngrams.py`)
 
